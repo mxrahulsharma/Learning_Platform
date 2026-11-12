@@ -23,15 +23,17 @@ services:
 
       # Set these in the Render dashboard. sync:false keeps them out of this file
       # and out of the repository.
+      #
+      # The model names are deliberately NOT here. src/core/models.ts reads
+      # OPENAI_BASE_URL and picks the right chat and speech models for whoever is
+      # on the other end, so leaving them unset is correct and is one fewer
+      # near-identical row to paste the wrong value into. Override OPENAI_MODEL
+      # only to pick a different model from the same provider.
       - key: APP_PASSCODE
         sync: false
       - key: OPENAI_API_KEY
         sync: false
       - key: OPENAI_BASE_URL
-        sync: false
-      - key: OPENAI_MODEL
-        sync: false
-      - key: OPENAI_STT_MODEL
         sync: false
       - key: OPENAI_SPEECH_BASE_URL
         sync: false

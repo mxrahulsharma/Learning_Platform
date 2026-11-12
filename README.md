@@ -32,9 +32,13 @@ and is what this setup was tested against:
 ```
 OPENAI_BASE_URL=https://api.groq.com/openai/v1
 OPENAI_API_KEY=<key from console.groq.com/keys>
-OPENAI_MODEL=openai/gpt-oss-120b
-OPENAI_STT_MODEL=whisper-large-v3
 ```
+
+That is the whole configuration. `src/core/models.ts` reads the base URL and picks the
+models to match — `openai/gpt-oss-120b` for coaching, `whisper-large-v3` for listening,
+and no text-to-speech, because Groq's voices need their terms accepted first and the app
+uses the browser's own voice instead. Set `OPENAI_MODEL` or `OPENAI_STT_MODEL` only to
+pick something different from the same provider.
 
 Text and speech are separate clients, so you can also split them across two providers:
 
@@ -551,7 +555,13 @@ The quality of this app *is* the quality of the prompt in `src/core/prompts.ts`.
 feels generic or too soft, edit the coaching rules there first — it's the highest-leverage
 file in the project.
 
-Models are all env-configurable (`OPENAI_MODEL`, `OPENAI_STT_MODEL`, `OPENAI_TTS_MODEL`).
+Models are all env-configurable (`OPENAI_MODEL`, `OPENAI_STT_MODEL`, `OPENAI_TTS_MODEL`),
+and all three are optional — unset means the right default for whatever `OPENAI_BASE_URL`
+points at. They are three different *kinds* of model and are not interchangeable; in a
+hosting dashboard they are three near-identical rows, and a speech model pasted into
+`OPENAI_MODEL` gets you a 404 naming a model you never meant to chat with. `models.ts`
+checks for that and returns the instruction instead of the 404.
+
 Note that `verbose_json` — which gives true audio duration for words-per-minute — is only
 supported by `whisper-1`; `speech.ts` falls back to the client's stopwatch for other models.
 
